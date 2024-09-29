@@ -6,7 +6,7 @@ body {
 }
 
 .container {
-    max-width: 600px;
+    max-width: 550px;
     margin: auto;
     background: white;
     padding: 30px;
@@ -39,7 +39,7 @@ input[type="text"]:focus, input[type="file"]:focus {
 button {
     width: 100%;
     padding: 12px;
-    background-color: #19cc09;
+    background-color: #f96b6b;
     color: #000000;
     font-weight: bold;
     border: none;
@@ -65,8 +65,9 @@ button {
 }
 
 button:hover {
-    background-color: #22e710;
+    background-color: #383838;
     transform: translateY(-2px);
+    color: #e0eafc
 }
 
 #resultado {
