@@ -244,7 +244,6 @@ function buscarPorCodigo() {
         if (impressoraSelecionada) {
             imprimirEtiqueta(resultado);
         } else {
-            alert("Por favor, selecione uma impressora.");
         }
     } else {
         resultadosDiv.innerHTML = "Nenhum resultado encontrado.";
