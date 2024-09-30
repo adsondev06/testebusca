@@ -98,13 +98,14 @@ function buscarPorCodigo() {
 }
 
 // Função para imprimir a etiqueta
+// Função para imprimir a etiqueta
 function imprimirEtiqueta(resultado) {
     const zpl = `
 ^XA
-^FO50,100^ADN,36,20^FD${resultado.driver}^FS
+^FO50,100^ADN,36,20^FB500,3,,C^FD${resultado.driver}^FS
 ^XZ
 `;
-
+    
     const selectedPrinter = impressoras.find(printer => printer.name === impressoraSelecionada);
     
     if (selectedPrinter) {
@@ -121,6 +122,7 @@ function imprimirEtiqueta(resultado) {
         console.error("Impressora não encontrada.");
     }
 }
+
 
 // Função para atualizar o histórico de buscas na tela
 function atualizarHistorico() {
