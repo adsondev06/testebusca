@@ -22,10 +22,10 @@ h1 {
 }
 
 input[type="text"], input[type="file"] {
-    width: 96%;
+    width: 95%;
     padding: 12px;
     margin: 10px 0;
-    border: 2px solid #000000;
+    border: 1px solid #000000;
     border-radius: 5px;
     font-size: 16px;
     transition: border-color 0.3s;
@@ -45,7 +45,7 @@ select {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
-    border: 2px solid #000000;
+    border: 1px solid #000000;
 }
 
 button {
