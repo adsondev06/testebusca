@@ -258,7 +258,6 @@ function buscarPorCodigo() {
 function imprimirEtiqueta(resultado) {
     const zpl = `
 ^XA
-^FO50,50^ADN,36,20^FD${resultado.codigo}^FS
 ^FO50,100^ADN,36,20^FD${resultado.driver}^FS
 ^XZ
 `;
