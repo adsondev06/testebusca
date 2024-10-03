@@ -1,17 +1,9 @@
-let dadosPlanilha = []; // Array para armazenar os dados da planilha
-let historicoBuscas = []; // Array para armazenar o histórico de buscas
-let impressoras = []; // Array para armazenar as impressoras disponíveis
-let impressoraSelecionada = null; // Impressora selecionada pelo usuário
+let dadosPlanilha = [];
+let historicoBuscas = [];
 
 // Função para ler a planilha
 document.getElementById("input-excel").addEventListener("change", (event) => {
     const file = event.target.files[0];
-
-    if (!file) {
-        alert("Por favor, selecione um arquivo.");
-        return;
-    }
-
     const reader = new FileReader();
 
     reader.onload = (e) => {
@@ -31,40 +23,15 @@ document.getElementById("input-excel").addEventListener("change", (event) => {
         console.log("Dados importados da planilha:", dadosPlanilha); // Para depuração
     };
 
-    reader.onerror = () => {
-        alert("Erro ao ler o arquivo. Verifique se o formato está correto.");
-    };
-
     reader.readAsArrayBuffer(file);
 });
 
-// Função para buscar impressoras disponíveis
-function buscarImpressoras() {
-    ZebraBrowserPrint.getLocalPrinters()
-        .then((printers) => {
-            impressoras = printers;
-            const select = document.getElementById("select-impressora");
-            select.innerHTML = ""; // Limpa opções anteriores
-
-            impressoras.forEach(printer => {
-                const option = document.createElement("option");
-                option.value = printer.name;
-                option.textContent = printer.name;
-                select.appendChild(option);
-            });
-        })
-        .catch((error) => {
-            console.error("Erro ao buscar impressoras:", error);
-        });
-}
-
-// Função para buscar pelo código
+// Função para buscar pelo código e imprimir o driver
 function buscarPorCodigo() {
     const codigoInput = document.getElementById("codigo").value.trim();
     const resultadosDiv = document.getElementById("resultado");
     resultadosDiv.innerHTML = ""; // Limpa resultados anteriores
 
-    // Valida entrada do usuário
     if (codigoInput === "") {
         resultadosDiv.innerHTML = "Por favor, insira um código para buscar.";
         return;
@@ -83,46 +50,17 @@ function buscarPorCodigo() {
         });
         atualizarHistorico();
 
-        // Imprime automaticamente após mostrar o resultado
-        if (impressoraSelecionada) {
-            imprimirEtiqueta(resultado);
-        } else {
-        }
+        // Chamar a função de impressão para a etiquetadora
+        imprimirEtiqueta(resultado.driver);
+
     } else {
         resultadosDiv.innerHTML = "Nenhum resultado encontrado.";
     }
 
-    // Limpa o campo de busca apenas quando o resultado for exibido ou não encontrado
+    // Limpa o campo de busca e mantém o foco
     document.getElementById("codigo").value = "";
     document.getElementById("codigo").focus();
 }
-
-// Função para imprimir a etiqueta
-// Função para imprimir a etiqueta
-function imprimirEtiqueta(resultado) {
-    const zpl = `
-^XA
-^FO50,100^ADN,36,20^FB500,3,,C^FD${resultado.driver}^FS
-^XZ
-`;
-    
-    const selectedPrinter = impressoras.find(printer => printer.name === impressoraSelecionada);
-    
-    if (selectedPrinter) {
-        const printer = new ZebraBrowserPrint.Printer(selectedPrinter.name);
-        
-        printer.print(zpl)
-            .then(() => {
-                console.log("Impressão enviada com sucesso.");
-            })
-            .catch((error) => {
-                console.error("Erro ao enviar impressão:", error);
-            });
-    } else {
-        console.error("Impressora não encontrada.");
-    }
-}
-
 
 // Função para atualizar o histórico de buscas na tela
 function atualizarHistorico() {
@@ -148,10 +86,9 @@ function filtrarHistorico() {
                item.driver.toLowerCase().includes(filtro);
     });
 
-    // Ordena numericamente com base no número após "Rizzy"
     historicoFiltrado.sort((a, b) => {
-        const numeroA = parseInt(a.driver.match(/\d+/)?.[0] || 0, 10); // Extrai o número de "Rizzy X"
-        const numeroB = parseInt(b.driver.match(/\d+/)?.[0] || 0, 10);
+        const numeroA = parseInt(a.driver.match(/\d+/)[0], 10);
+        const numeroB = parseInt(b.driver.match(/\d+/)[0], 10);
         return numeroA - numeroB; // Compara os números para ordenar
     });
 
@@ -174,8 +111,8 @@ function gerarXLSX() {
             return item.codigo.toString().toLowerCase().includes(filtro) ||
                    item.driver.toLowerCase().includes(filtro);
         }).sort((a, b) => {
-            const numeroA = parseInt(a.driver.match(/\d+/)?.[0] || 0, 10);
-            const numeroB = parseInt(b.driver.match(/\d+/)?.[0] || 0, 10);
+            const numeroA = parseInt(a.driver.match(/\d+/)[0], 10);
+            const numeroB = parseInt(b.driver.match(/\d+/)[0], 10);
             return numeroA - numeroB;
         })
         : historicoBuscas; // Caso contrário, exporta tudo
@@ -193,17 +130,43 @@ function gerarXLSX() {
     XLSX.writeFile(workbook, "historico_buscas.xlsx");
 }
 
-// Evento para selecionar impressora
-document.getElementById("select-impressora").addEventListener("change", (event) => {
-    impressoraSelecionada = event.target.value;
-});
-
-// Adiciona evento de entrada no campo de entrada de código com Enter
+// Adiciona evento de busca ao pressionar a tecla Enter
 document.getElementById("codigo").addEventListener("keydown", (event) => {
-    if (event.key === 'Enter') {
-        buscarPorCodigo(); // Executa a busca apenas ao pressionar Enter
+    if (event.key === "Enter") {
+        buscarPorCodigo(); // Chama a função de busca ao pressionar Enter
     }
 });
+
+// Função para imprimir a etiqueta com o driver encontrado
+function imprimirEtiqueta(driver) {
+    const printerName = 'Zebra_ZD220'; // Nome da impressora configurada
+    const textoEtiqueta = `Driver: ${driver}`;
+    
+    // Chama o módulo 'printer' para imprimir (neste exemplo, o módulo deve ser configurado no backend)
+    const printCommand = `! 0 200 200 210 1\nTEXT 4 0 30 40 ${textoEtiqueta}\nPRINT\n`;
+    
+    // Exemplo de chamada à função de impressão (ajuste conforme o backend)
+    fetch('http://localhost:3000/imprimir', { // Assegure-se de usar o URL completo
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            printer: printerName,
+            command: printCommand
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log("Etiqueta impressa com sucesso.");
+        } else {
+            console.error("Erro ao imprimir a etiqueta:", response.statusText);
+        }
+    })
+    .catch(error => {
+        console.error("Erro de comunicação com o servidor:", error);
+    });
+}
 
 // Alerta de confirmação ao recarregar a página
 window.addEventListener('beforeunload', function (event) {
@@ -211,6 +174,3 @@ window.addEventListener('beforeunload', function (event) {
     event.returnValue = message; // Para a maioria dos navegadores
     return message; // Para Firefox
 });
-
-// Chama a função para buscar impressoras quando a página carregar
-document.addEventListener("DOMContentLoaded", buscarImpressoras);

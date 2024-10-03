@@ -5,23 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar Driver por Código</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ZebraBrowserPrint/1.0.0/ZebraBrowserPrint.js"></script>
-    <script src="path/to/zebra_browser_print.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Expedição de Rotas</h1>
+        <h1>Buscar Driver</h1>
         <input type="file" id="input-excel" accept=".xlsx, .xls" />
-        
-        <!-- Seletor para as impressoras -->
-        <select id="select-impressora">
-            <option value="" disabled selected>Selecione uma impressora</option>
-            <!-- As opções serão adicionadas aqui dinamicamente -->
-        </select>
-
         <input type="text" id="codigo" placeholder="Digite o código para buscar" />
-        <button id="buscar" onclick="buscarPorCodigo()">Buscar</button> <br>
+        <button onclick="buscarPorCodigo()">Buscar</button> <br>
         <button onclick="gerarXLSX()" class="extrair">Exportar XLSX do Histórico</button>
 
         <div id="resultado"></div>
@@ -34,3 +26,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
